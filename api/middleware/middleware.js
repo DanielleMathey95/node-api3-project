@@ -1,37 +1,39 @@
-const User = require('../users/users-model')
+const User = require("../users/users-model");
 
 function logger(req, res, next) {
   // DO YOUR MAGIC
   const timestamp = new Date().toLocaleString();
   const method = req.method;
-  const url = req.originalUrl
+  const url = req.originalUrl;
   console.log(`${timestamp} ${method} to ${url}`);
   next();
 }
 
 async function validateUserId(req, res, next) {
   try {
-    const user = await User.getById(req.params.id)
+    const user = await User.getById(req.params.id);
     if (!user) {
       res.status(404).json({
-        message: 'User not found'
-      })
+        message: "User not found",
+      });
     } else {
-      req.user = user
-      next()
+      req.user = user;
+      next();
     }
   } catch {
     res.status(500).json({
-      message: 'Issue finding user'
-    })
+      message: "Issue finding user",
+    });
   }
 }
 
 function validateUser(req, res, next) {
-  // DO YOUR MAGIC
-
-  console.log("validateUser middleware");
-  next();
+  const { name } = req.body;
+  if (!name) {
+    req.status(400).json({ message: "missing required name field" });
+  } else {
+    next();
+  }
 }
 
 function validatePost(req, res, next) {
